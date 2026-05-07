@@ -15,28 +15,33 @@ function getCookie(cname) {
   }
 
   var cookies = document.cookie ? document.cookie.split(';') : [];
+  var result = '';
 
-  for (var i = 0; i < cookies.length; i++) {
-    var cookie = cookies[i].trim();
+  cookies.some(function (rawCookie) {
+    var cookie = String(rawCookie || '').trim();
     var separatorIndex = cookie.indexOf('=');
 
     if (separatorIndex === -1) {
-      continue;
+      return false;
     }
 
     var name = cookie.substring(0, separatorIndex);
     var value = cookie.substring(separatorIndex + 1);
 
-    if (name === cname) {
-      try {
-        return decodeURIComponent(value);
-      } catch (e) {
-        return value;
-      }
+    if (name !== cname) {
+      return false;
     }
-  }
 
-  return '';
+    try {
+      result = decodeURIComponent(value);
+    } catch (e) {
+      result = value;
+    }
+
+    return true;
+  });
+
+  return result;
 }
 
 function checkCookie() {
